@@ -81,14 +81,14 @@ const withIosAppDelegateBody: ConfigPlugin = (config) => {
 const withAndroidMainActivityImport: ConfigPlugin = (config) => {
   // @ts-ignore
   return withMainActivity(config, (config) => {
-    const newSrc = `import android.view.KeyEvent;
-import com.github.kevinejohn.keyevent.KeyEventModule;`;
+    const newSrc = `import android.view.KeyEvent
+import com.github.kevinejohn.keyevent.KeyEventModule`;
 
     const newConfig = mergeContents({
       tag: "react-native-keyevent-import",
       src: config.modResults.contents,
       newSrc,
-      anchor: `;`, // MainActivity.java
+      anchor: `import android.os.Bundle`, // MainActivity.kt
       offset: 1,
       comment: "//",
     });
@@ -102,53 +102,50 @@ import com.github.kevinejohn.keyevent.KeyEventModule;`;
 const withAndroidMainActivityBody: ConfigPlugin = (config) => {
   // @ts-ignore
   return withMainActivity(config, (config) => {
-    const newSrc = `@Override
-public boolean onKeyDown(int keyCode, KeyEvent event) {
+    const newSrc = `
+  override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+    // Uncomment this if key events should only trigger once when the key is held down
+    // if (event.repeatCount == 0) {
+    //   KeyEventModule.getInstance().onKeyDownEvent(keyCode, event)
+    // }
 
-  // // Uncomment this is key events should only trigger once when key is held down
-  // if (event.getRepeatCount() == 0) {
-  //   KeyEventModule.getInstance().onKeyDownEvent(keyCode, event);
-  // }
+    // This will trigger the key repeat if the key is held down
+    // Comment this out if uncommenting the above
+    KeyEventModule.getInstance().onKeyDownEvent(keyCode, event)
 
-  // // This will trigger the key repeat if the key is held down
-  // // Comment this out if uncommenting the above
-  KeyEventModule.getInstance().onKeyDownEvent(keyCode, event);
+    // Uncomment this if you want the default keyboard behavior
+    // return super.onKeyDown(keyCode, event)
 
-  // // Uncomment this if you want the default keyboard behavior
-  // return super.onKeyDown(keyCode, event);
+    // The default keyboard behavior will be overridden
+    // This is similar to what e.preventDefault() does in a browser
+    // Comment this if uncommenting the above
+    super.onKeyDown(keyCode, event)
+    return true
+  }
 
-  // // The default keyboard behaviour wll be overridden
-  // // This is similar to what e.preventDefault() does in a browser
-  // // comment this if uncommenting the above
-  super.onKeyDown(keyCode, event);
-  return true;
-}
+  override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+    KeyEventModule.getInstance().onKeyUpEvent(keyCode, event)
 
-@Override
-public boolean onKeyUp(int keyCode, KeyEvent event) {
-  KeyEventModule.getInstance().onKeyUpEvent(keyCode, event);
+    // Uncomment this if you want the default keyboard behavior
+    // return super.onKeyUp(keyCode, event)
 
-  // // Uncomment this if you want the default keyboard behavior
-  // return super.onKeyUp(keyCode, event);
+    // The default keyboard behavior will be overridden
+    // This is similar to what e.preventDefault() does in a browser
+    // Comment this if uncommenting the above
+    super.onKeyUp(keyCode, event)
+    return true
+  }
 
-  // // The default keyboard behaviour wll be overridden
-  // // This is similar to what e.preventDefault() does in a browser
-  // // comment this if uncommenting the above
-  super.onKeyUp(keyCode, event);
-  return true;
-}
-
-@Override
-public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
-    KeyEventModule.getInstance().onKeyMultipleEvent(keyCode, repeatCount, event);
-    return super.onKeyMultiple(keyCode, repeatCount, event);
-}`;
+  override fun onKeyMultiple(keyCode: Int, repeatCount: Int, event: KeyEvent): Boolean {
+    KeyEventModule.getInstance().onKeyMultipleEvent(keyCode, repeatCount, event)
+    return super.onKeyMultiple(keyCode, repeatCount, event)
+  }`;
 
     const newConfig = mergeContents({
       tag: "react-native-keyevent-body",
       src: config.modResults.contents,
       newSrc,
-      anchor: `public class MainActivity extends ReactActivity {`, // MainActivity.java
+      anchor: `class MainActivity : ReactActivity() {`, // MainActivity.kt
       offset: 1,
       comment: "//",
     });
