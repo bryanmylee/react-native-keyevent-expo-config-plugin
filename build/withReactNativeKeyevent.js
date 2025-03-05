@@ -10,7 +10,7 @@ const withIosAppDelegateImport = (config) => {
             tag: "react-native-keyevent-import",
             src: config.modResults.contents,
             newSrc,
-            anchor: `#import "AppDelegate.h"`, // AppDelegate.mm
+            anchor: /#import "AppDelegate\.h"/, // AppDelegate.mm
             offset: 1,
             comment: "//",
         });
@@ -59,7 +59,7 @@ const withIosAppDelegateBody = (config) => {
             tag: "react-native-keyevent-body",
             src: config.modResults.contents,
             newSrc,
-            anchor: `@implementation AppDelegate`, // AppDelegate.mm
+            anchor: /@implementation AppDelegate/, // AppDelegate.mm
             offset: 1,
             comment: "//",
         });
@@ -78,7 +78,7 @@ import com.github.kevinejohn.keyevent.KeyEventModule`;
             tag: "react-native-keyevent-import",
             src: config.modResults.contents,
             newSrc,
-            anchor: `import android.os.Bundle`, // MainActivity.kt
+            anchor: /import android\.os\.Bundle/, // MainActivity.kt
             offset: 1,
             comment: "//",
         });
@@ -133,7 +133,7 @@ const withAndroidMainActivityBody = (config) => {
             tag: "react-native-keyevent-body",
             src: config.modResults.contents,
             newSrc,
-            anchor: `class MainActivity : ReactActivity() {`, // MainActivity.kt
+            anchor: /class MainActivity : ReactActivity\(\) {/, // MainActivity.kt
             offset: 1,
             comment: "//",
         });
